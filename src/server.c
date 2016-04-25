@@ -1,14 +1,34 @@
+#include <stdio.h>
+#include <assert.h>
+#include <string.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/epoll.h>
 #include "comm.h"
 
 /// 自定义epoll最多支持的socket，取值1来自于需求设计
 #define MAX_EPOLL_SIZE 1
 
+
+int create_server_socket(int *listen_sock)
+{
+	return 0;
+}
+
 int process_upload(const struct trans_data_t *ptran)
 {
 	assert(ptran != NULL);
 
-	ldebug("be called, filename: %s, data_len: %d", ptran.filename, ptran.data_len);
+	ldebug("be called, filename: %s, data_len: %d", ptran->filename, ptran->data_len);
 	return write_file(ptran);
+}
+
+int process_download(const struct trans_data_t *ptran)
+{
+	return 0;
 }
 
 int process_func(int trans_sock)
@@ -98,7 +118,7 @@ int main(int argc, char **argv)
 		{
 			if (wait_process_fds[index].data.fd == listen_sock)
 			{
-				trans_sock = accept(listen_sock, (struct sockaddr *)&client_addr, &sock_len);
+				trans_sock = accept(listen_sock, (struct sockaddr *)(&client_addr), (socklen_t *)&sock_len);
 				if (-1 == trans_sock)
 				{
 					lerror("call accept() failed, listen_sock: %d, err: %s", listen_sock, strerror(errno));
@@ -109,7 +129,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (evnt_fd > 0)
+	if (event_fd > 0)
 	{
 		close(event_fd);
 	}
@@ -119,7 +139,7 @@ int main(int argc, char **argv)
 	}
 	return 0;
 ERR:
-	if (evnt_fd > 0)
+	if (event_fd > 0)
 	{
 		close(event_fd);
 	}

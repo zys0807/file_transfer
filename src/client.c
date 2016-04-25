@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <assert.h>
-
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <libgen.h>
 #include "comm.h"
 
-static int client_upload(int sock, const char *file_path)
+static int client_upload(int sock, char *file_path)
 {
 	assert(file_path != NULL);
 	assert(sock >= 0);
@@ -15,7 +18,7 @@ static int client_upload(int sock, const char *file_path)
 	int file_size = 0;
 	struct trans_data_t *ptrans = NULL;
 
-	if (-1 == get_file_size(file_path, file_size))
+	if (-1 == get_file_size(file_path, &file_size))
 	{
 		lerror("call get_file_size() failed");
 		goto ERR;
@@ -60,7 +63,7 @@ int main(int argc, char **argv)
 	int ch = 0;
 	int cmd = UD_MIN;
 	int sock = -1;
-	char *src_file_path = NULL, dst_file_path = NULL;
+	char *src_file_path = NULL, *dst_file_path = NULL;
 	struct option log_options[] = {
 		{ "upload",		0,	NULL,	'u' },
 		{ "download",	0,	NULL,	'd' },
@@ -68,7 +71,7 @@ int main(int argc, char **argv)
 		{ "dstfile",	1,	NULL,	't' },
 	};
 
-	while ((ch == getopt_long(argc, argv, NULL, log_options)) != EOF)
+	while ((ch == getopt_long(argc, argv, NULL, log_options, NULL)) != EOF)
 	{
 		switch (ch)
 		{

@@ -1,10 +1,20 @@
-object = client.o server.o comm.o
+all : client server
 
-client: $(object)
-	gcc -o0 -g client $(object)
 
-server: $(object)
-	gcc -o0 -g server $(object)
+client : client.o comm.o
+	cc -o client client.o comm.o
 
-clean:
-	-rm client server *.o
+server : server.o comm.o
+	cc -o server server.o comm.o
+
+comm.o : comm.c comm.h
+	cc -c comm.c
+
+server.o : server.c comm.h
+	cc -c server.c
+
+client.o : client.c comm.h
+	cc -c client.c
+
+clean : 
+	-rm -f client server *.o

@@ -1,4 +1,9 @@
 #include "comm.h"
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include <sys/stat.h>
+#include <errno.h>
 
 int get_file_size(const char *file_path, int *pfile_size)
 {
@@ -54,13 +59,13 @@ int write_file(struct trans_data_t *ptran)
 
 	char *filename = ptran->filename;
 	FILE *pfile = NULL;
-	char file_path = [MAX_FILE_PATH_LENGTH] = '\0';
+	char file_path[MAX_FILE_PATH_LENGTH] = { '\0' };
 	int wlen = 0;
 
-	snprinf(file_path, MAX_FILE_PATH_LENGTH, "%s%s", "server", filename);
+	snprintf(file_path, MAX_FILE_PATH_LENGTH, "%s%s", "server", filename);
 	file_path[MAX_FILE_PATH_LENGTH - 1] = '0';
 
-	pfile = fopen(file_path, 'w');
+	pfile = fopen(file_path, "w");
 	if (NULL == pfile)
 	{
 		lerror("open file failed, file_path: %s, err:%s", file_path, strerror(errno));
